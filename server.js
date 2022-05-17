@@ -8,7 +8,9 @@ port = 5000;
 
 const app = http.createServer((req, res) => {
 
-    if (req.method === "GET") { 
+    const items = req.url.split("/") 
+
+    if (req.method === "GET" && items[1] === "todos") { 
 
         
       
