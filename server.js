@@ -5,6 +5,7 @@ const fs = require("fs");
 port = 5000;
 
     let todoPost = { 
+    ID: 1,
     todo: 'Diskdfsdfsda',
    
 };
@@ -24,39 +25,20 @@ const app = http.createServer((req, res) => {
         
      }   else if (req.method === "POST"){
         
-        fs.readFile("todos.json", (error, data) => {
-            if (error) {
-              console.log(error);
-              return;
-            }
-            
-            fs.writeFile("todos.json", JSON.stringify(todoPost, null, 2), (err) => {
-              if (err) {
-                console.log('Failed to write updated data to file');
-                return;
-              }
-              console.log('Updated file successfully');
-            });
-          });
-
-
-      /*  fs.readFile('todos.json', function (err, data) {
+     
+        fs.readFile('todos.json', function (err, data) {
             let json = JSON.parse(data);
+            console.log(json);
             json.push(todoPost);    
-            let todoPost2 = JSON.stringify(todoPost);
+            let todoPost2 = JSON.stringify(json);
             fs.writeFile("todos.json", todoPost2, function(err){
               if (err) throw err;
-              console.log('The "data to append" was appended to file!');
+              console.log('data skriven');
             });
-        }) */
+        }) 
 
 
-      /*  let json = JSON.stringify(todoPost, null, 2);
-
-        fs.appendFile('todos.json', json, (err) => {
-            if (err) throw err;
-            console.log('Data written to file');
-        }); */
+      
         res.statusCode = 201;
         res.end();
     } else if (req.method === "DELETE") {
