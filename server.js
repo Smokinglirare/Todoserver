@@ -14,6 +14,7 @@ const max = 10000000;
     todo: 'Diskdfsdfsda',
    
 }; */
+
 let todos = [];
 
 fs.readFile("todos.json", (err, data) => {
@@ -36,18 +37,28 @@ const app = http.createServer((req, res) => {
         
 
 
-    } else if (req.method === "GET" && items.length === 3) {
+    } else if (req.method === "GET" && items[1] === "todos" && items.length === 3) {
             res.statusCode = 200;
-            todoIndex = parseInt(items[2]);
-            res.setHeader("Content-Type", "application/json");
-            res.end(JSON.stringify(todos[todoIndex]));
+           // todoIndex = parseInt(items[2]);
+            const todoID = parseInt(items[2]);
+           const uniqueTodo = todos.find(todo => parseInt(todo.id) === todoID);
+            
+            if (uniqueTodo) {
+                res.statusCode = 200;
+                res.setHeader("Content-Type", "application/json");
+            res.end(JSON.stringify(uniqueTodo));
+              } else {
+                res.statusCode = 404;
+                res.end();
+              }
 
-
+// JSON.stringify(todos[todoIndex])
         
     } else if (req.method === "POST") {
             let todoPost = {
                 id: Math.floor(Math.random() * max),
                 todo: 'Diskdfsdfsda',
+                completed: false
 
             };
             todos.push(todoPost);
@@ -72,20 +83,60 @@ const app = http.createServer((req, res) => {
         
     }
     else if (req.method === "PUT" && items[1] === "todos" && items.length === 3) {
+        
+        
+        const todoId = parseInt(items[2]);
+    const todoIndex = todos.findIndex(todo => todo.id === todoId);
+
+    req.on("data", (chunk) => {
+      todos[todoIndex] = JSON.parse(chunk);
+      fs.writeFile("todos.json", JSON.stringify(todos), (err) => {
+        if (err) throw err;
+        res.statusCode = 200;
+    res.end();
+    });
+    })
+    
+    
+        
+        
+        
+        
+        
+        
         // PUT ersätter hela objektet
-            const todoID = parseInt(items[2]);
+      /*     const todoID = parseInt(items[2]);
+             
             req.on("data", (chunk) => {
                 data = JSON.parse(chunk);
                 todos = todos.map(todo => { if (todo.id === todoID) { todo.todo = data.todo } });
+                fs.writeFile("todos.json", JSON.stringify(todos), (err) => {
+                    if (err) throw err;
+                    res.statusCode = 200;
+                res.end(); 
+                });
               })
-            
+            */
 
+            
+            
+            
+    } else if (req.method === "PATCH" && items[1] === "todos" && items.length === 3) {
+        const todoId = parseInt(items[2]);
+        const todoIndex = todos.findIndex(todo => todo.id === todoId);
+        req.on("data", (chunk) => {
+            todos[todoIndex] = {
+                ...todos[todoIndex], 
+                ...JSON.parse(chunk)
+            };
+            
             fs.writeFile("todos.json", JSON.stringify(todos), (err) => {
-                if (err) throw err;
-                res.statusCode = 200;
-                res.end();
-            });
-        
+              if (err) throw err;
+              res.statusCode = 200;
+          res.end();
+          });
+          })
+          
     }
 
     else {
@@ -122,3 +173,23 @@ res.statusCode = 200;
 res.end();
 
 } */
+
+/*
+fetch("http://localhost:5000/students", {
+    method: "POST",
+    body: JSON.stringify({ id: 6, name: "Torpan"}),
+    headers: { "Content-Type": "application/json"}
+})
+
+fetch("http://localhost:5000/todos", {
+    method: "PUT",
+    body: JSON.stringify({ id: 6094645 ,todo:"Diska", completed: false}),
+    headers: { "Content-Type": "application/json"}
+})
+
+fetch("http://localhost:5000/todos", {
+    method: "PATCH",
+    body: JSON.stringify({ completed: true,}),
+    headers: { "Content-Type": "application/json"}
+})
+*/
