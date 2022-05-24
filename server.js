@@ -23,6 +23,14 @@ fs.readFile("todos.json", (err, data) => {
 })
         
 const app = http.createServer((req, res) => {
+    if (req.method === "OPTIONS") {
+        res.setHeader("Access-Control-Allow-Origin", "*");
+        res.setHeader("Access-Control-Allow-Methods", "GET, PATCH, DELETE, OPTIONS, POST, PUT");
+        res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+      
+        res.statusCode = 200;
+        res.end();
+      }
 
     const items = req.url.split("/")
     //   console.log(items);
@@ -31,6 +39,7 @@ const app = http.createServer((req, res) => {
 
 
     if (req.method === "GET" && items[1] === "todos" && items.length === 2) {
+        res.setHeader("Access-Control-Allow-Origin", "*");
             res.statusCode = 200;
             res.setHeader("Content-Type", "application/json");
             res.end(JSON.stringify(todos));
@@ -38,7 +47,8 @@ const app = http.createServer((req, res) => {
 
 
     } else if (req.method === "GET" && items[1] === "todos" && items.length === 3) {
-            res.statusCode = 200;
+        res.setHeader("Access-Control-Allow-Origin", "*");  
+        res.statusCode = 200;
            // todoIndex = parseInt(items[2]);
             const todoID = parseInt(items[2]);
            const uniqueTodo = todos.find(todo => parseInt(todo.id) === todoID);
@@ -55,7 +65,8 @@ const app = http.createServer((req, res) => {
 // JSON.stringify(todos[todoIndex])
         
     } else if (req.method === "POST") {
-            let todoPost = {
+        res.setHeader("Access-Control-Allow-Origin", "*");  
+        let todoPost = {
                 id: Math.floor(Math.random() * max),
                 todo: 'Diskdfsdfsda',
                 completed: false
@@ -72,7 +83,8 @@ const app = http.createServer((req, res) => {
 
 
     } else if (req.method === "DELETE" && items[1] === "todos" && items.length === 3) {
-            const todoID = parseInt(items[2]);
+        res.setHeader("Access-Control-Allow-Origin", "*");
+        const todoID = parseInt(items[2]);
             todos = todos.filter(todo => parseInt(todo.id) !== todoID);
             fs.writeFile("todos.json", JSON.stringify(todos), (err,) => {
                 if (err) throw err;
@@ -83,7 +95,7 @@ const app = http.createServer((req, res) => {
         
     }
     else if (req.method === "PUT" && items[1] === "todos" && items.length === 3) {
-        
+        res.setHeader("Access-Control-Allow-Origin", "*");
         
         const todoId = parseInt(items[2]);
     const todoIndex = todos.findIndex(todo => todo.id === todoId);
@@ -148,6 +160,8 @@ const app = http.createServer((req, res) => {
 app.listen(port, () => {
     console.log(`Nu körs servern på port ${port}`)
 })
+
+
 
 /*
 res.setHeader("Access-Control-Allow-Origin", "*");
